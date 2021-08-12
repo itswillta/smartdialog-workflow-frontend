@@ -101,7 +101,7 @@ const Workflow: Component<WorkflowProps> = (props) => {
     const stringifiedElements = localStorage.getItem('elements');
 
     if (!stringifiedElements) {
-      setElements(graphElements);
+      setElements(prebuiltElements);
 
       return;
     }
