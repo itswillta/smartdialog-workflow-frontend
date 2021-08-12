@@ -4,6 +4,7 @@ import SolidFlowy, { addMarkerDefinition, Background, BackgroundVariant, Standar
 import StandardNode from './nodes/StandardNode/StandardNode';
 import IntentNode from './nodes/IntentNode/IntentNode';
 import EdgeWithStartIndicator from './edges/EdgeWithStartIndicator';
+import prebuiltElements from './elements.json';
 
 const nodeTypes = {
   standardNode: StandardNode,
@@ -107,7 +108,11 @@ const Workflow: Component<WorkflowProps> = (props) => {
 
     const elements = JSON.parse(stringifiedElements);
 
-    setElements(elements);
+    if (elements.length > 20) {
+      setElements(elements);
+    } else {
+      setElements(prebuiltElements);
+    }
   };
 
   return (
