@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import SolidFlowy, { addMarkerDefinition, Background, BackgroundVariant, StandardEdge, useSolidFlowyStoreById } from 'solid-flowy/lib';
+import { DraggableSolidFlowy, addMarkerDefinition, Background, BackgroundVariant, StandardEdge, useSolidFlowyStoreById } from 'solid-flowy/lib';
 
 import StandardNode from './nodes/StandardNode/StandardNode';
 import IntentNode from './nodes/IntentNode/IntentNode';
@@ -116,7 +116,7 @@ const Workflow: Component<WorkflowProps> = (props) => {
   };
 
   return (
-    <SolidFlowy
+    <DraggableSolidFlowy
       edgeTypes={edgeTypes}
       nodeTypes={nodeTypes}
       snapToGrid={true}
@@ -125,7 +125,7 @@ const Workflow: Component<WorkflowProps> = (props) => {
       storeId={props.storeId}
     >
       <Background color="#aaa" gap={32} variant={BackgroundVariant.Lines} storeId={props.storeId} />
-    </SolidFlowy>
+    </DraggableSolidFlowy>
   );
 };
 

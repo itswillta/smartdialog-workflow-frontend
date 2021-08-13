@@ -16,7 +16,7 @@
     "vite-plugin-solid": "^2.0.1"
   },
   "dependencies": {
-    "solid-flowy": "0.0.0",
+    "solid-flowy": "0.0.1",
     "solid-js": "^1.0.7",
     "uuid": "^8.3.2"
   }
