@@ -1,0 +1,47 @@
+.invalid-status-popover-content {
+  width: 280px;
+}
+
+.invalid-status-popover-content__header {
+  display: flex;
+  align-items: center;
+  background: rgba(250, 16, 62, 0.05);
+  padding: 12px 16px;
+}
+
+.invalid-status-popover-content__header__title {
+  font-size: 14px;
+  margin: 0 0 0 8px;
+}
+
+.invalid-status-popover-content__body {
+  padding: 12px 16px 16px 16px;
+}
+
+.invalid-status-popover-content__body__title {
+  font-size: 12px;
+  margin: 0 0 8px 0;
+}
+
+.invalid-status-popover-content__body__description {
+  font-size: 12px;
+  margin: 0 0 12px 0;
+}
+
+.invalid-status-popover-content__body__show-errors-button {
+  margin-right: 12px;
+  font-size: 12px;
+}
+
+.invalid-status-popover-content__body__force-save-button {
+  font-size: 12px;
+}
+
+.invalid-status-popover-content__black-button {
+  background: #111111;
+  color: #ffffff;
+
+  &:hover {
+    background: #000000;
+  }
+}

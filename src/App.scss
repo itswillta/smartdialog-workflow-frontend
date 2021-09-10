@@ -1,0 +1,16 @@
+.workflow-app {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+
+  .solid-flowy__edge-path {
+    stroke: #66666f;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  .solid-flowy__thinarrow, .edge__start-indicator {
+    stroke: #66666f;
+    fill: #66666f;
+  }
+}

@@ -1,0 +1,52 @@
+.draggable-block {
+  display: flex;
+  margin-bottom: 24px;
+  cursor: grabbing;
+  user-select: none;
+
+  &.draggable-block--minimized {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.draggable-block__icon-group {
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  color: #e9e9ef;
+}
+
+.draggable-block__icon-group__block-type-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9e9ef;
+  width: 36px;
+  height: 36px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-left: 8px;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+
+.draggable-block__text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+}
+
+.draggable-block__text-container__name {
+  color: rgb(0, 0, 52);
+  font-size: 16px;
+  line-height: 18.75px;
+  margin: 0;
+}
+
+.draggable-block__text-container__description {
+  margin: 4px 0 0 0;
+  color: #828282;
+  font-size: 14px;
+  line-height: 16px;
+}

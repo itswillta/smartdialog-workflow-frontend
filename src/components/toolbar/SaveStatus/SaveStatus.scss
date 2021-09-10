@@ -1,0 +1,13 @@
+.save-status__container {
+  display: flex;
+  align-items: center;
+  color: #616161;
+  font-size: 12px;
+  user-select: none;
+
+  .svg-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+}

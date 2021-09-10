@@ -1,0 +1,23 @@
+[
+  {
+    "id": "entity-0",
+    "name": "sys_geo_district",
+    "parameter": "@sys.geo_district",
+    "values": ["NULL"],
+    "status": "APPROVED"
+  },
+  {
+    "id": "entity-1",
+    "name": "hinh_thuc_cho_vay",
+    "parameter": "Hình thức cho vay",
+    "values": ["vay_the_chap", "vay_tin_chap", "vay_cam_co_GTCG"],
+    "status": "APPROVED"
+  },
+  {
+    "id": "entity-2",
+    "name": "muc_dich_cho_vay",
+    "parameter": "Mục đích cho vay",
+    "values": ["vay_mua_xe", "vay_mua_bds", "vay_kinh_doanh", "vay_tieu_dung"],
+    "status": "APPROVED"
+  }
+]

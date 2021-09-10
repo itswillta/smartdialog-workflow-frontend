@@ -1,0 +1,43 @@
+.toolbar {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+}
+
+.toolbar__icon-button {
+  width: 32px;
+  height: 32px;
+}
+
+.toolbar__icon-button--mR {
+  margin-right: 16px;
+}
+
+.toolbar__separator {
+  display: inline-block;
+  width: 0;
+  height: 24px;
+  border-right: 1px solid rgba(0, 0, 0, 60%);
+  margin: 0 12px 0 12px;
+}
+
+.toolbar__zoom-input {
+  text-align: center;
+  margin: 0 4px;
+  color: var(--black);
+  border: none;
+  background: #f1f3f4;
+  border-radius: 2px;
+  padding: 8px 12px;
+  outline: none;
+  font-size: 14px;
+  font-weight: 500;
+  width: 60px;
+}

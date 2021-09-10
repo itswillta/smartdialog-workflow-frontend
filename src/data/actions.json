@@ -1,0 +1,32 @@
+[
+  {
+    "id": "action-0",
+    "name": "xac_nhan_muc_dich_cho_vay",
+    "displayName": "Xác nhận mục đích cho vay",
+    "status": "APPROVED"
+  },
+  {
+    "id": "action-1",
+    "name": "xac_nhan_hinh_thuc_cho_vay",
+    "displayName": "Xác nhận hình thức cho vay",
+    "status": "APPROVED"
+  },
+  {
+    "id": "action-2",
+    "name": "dieu_kien_vay_von",
+    "displayName": "Điều kiện vay vốn",
+    "status": "APPROVED"
+  },
+  {
+    "id": "action-3",
+    "name": "xin_loi",
+    "displayName": "Xin lỗi",
+    "status": "APPROVED"
+  },
+  {
+    "id": "action-4",
+    "name": "vi_tri_atm",
+    "displayName": "Vị trí ATM",
+    "status": "APPROVED"
+  }
+]

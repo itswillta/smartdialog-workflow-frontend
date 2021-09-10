@@ -1,7 +1,9 @@
-import { Component, createEffect, JSX } from 'solid-js';
+import { Component } from 'solid-js';
 import { Node, useSolidFlowyStoreById } from 'solid-flowy/lib';
 
-import styles from './IntentNodeBody.module.css';
+import Autocomplete from '../../common/Autocomplete/Autocomplete';
+import { useWorkflowContext } from '../../../App';
+import './IntentNodeBody.scss';
 
 interface IntentNodeBodyProps {
   node: Node;
@@ -10,18 +12,32 @@ interface IntentNodeBodyProps {
 
 const IntentNodeBody: Component<IntentNodeBodyProps> = (props) => {
   const [state, { upsertNode }] = useSolidFlowyStoreById(props.storeId);
+  const { intents } = useWorkflowContext();
+  const approvedIntents = () => intents().filter((intent) => intent.status === 'APPROVED');
 
-  const handleActionChange: JSX.DOMAttributes<HTMLInputElement>['onInput'] = (event) => {
-    const updatedNode = { ...props.node, data: { ...props.node.data, intent: event.currentTarget.value }};
+  const handleActionChange = (newIntentName: string) => {
+    if (props.node.data.intent === newIntentName) return;
+
+    const updatedNode = {
+      ...props.node,
+      data: { ...props.node.data, intent: newIntentName },
+    };
 
     upsertNode(updatedNode);
   };
 
   return (
-    <main className={styles.Main}>
-      <input className={styles.Input} value={props.node.data.intent} onInput={handleActionChange} placeholder="Intent" />
+    <main class='intent-node-body__main'>
+      <Autocomplete
+        options={approvedIntents()}
+        getOptionKey={(option) => option.name as string}
+        getOptionLabel={(option) => option.displayName as string}
+        value={props.node.data.intent}
+        onChange={handleActionChange}
+        placeholder="Intent"
+      />
     </main>
-  )
+  );
 };
 
 export default IntentNodeBody;

@@ -1,0 +1,35 @@
+.action-node-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f57f17;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.action-node-header__leading-icon {
+  margin-right: 4px;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+}
+
+.action-node-header__title {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  flex-grow: 1;
+  text-align: left;
+  margin: 0;
+}
+
+.action-node-header__more-options-button {
+  color: #ffffff;
+  width: 24px;
+  height: 24px;
+}
+
+.action-node-header__more-options-button__icon {
+  width: 20px;
+  height: 20px;
+}

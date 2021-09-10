@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, input, button {
+  box-sizing: border-box;
+  font-family: Roboto;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: Roboto;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  background: #e8e8e8;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

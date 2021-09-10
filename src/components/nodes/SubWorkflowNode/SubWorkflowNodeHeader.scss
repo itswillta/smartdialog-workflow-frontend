@@ -1,0 +1,35 @@
+.sub-workflow-node-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #512da8;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.sub-workflow-node-header__leading-icon {
+  margin-right: 4px;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+}
+
+.sub-workflow-node-header__title {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  flex-grow: 1;
+  text-align: left;
+  margin: 0;
+}
+
+.sub-workflow-node-header__more-options-button {
+  color: #ffffff;
+  width: 24px;
+  height: 24px;
+}
+
+.sub-workflow-node-header__more-options-button__icon {
+  width: 20px;
+  height: 20px;
+}

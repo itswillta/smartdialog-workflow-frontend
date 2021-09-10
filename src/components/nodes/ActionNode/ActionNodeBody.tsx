@@ -1,0 +1,43 @@
+import { Component } from 'solid-js';
+import { Node, useSolidFlowyStoreById } from 'solid-flowy/lib';
+
+import Autocomplete from '../../common/Autocomplete/Autocomplete';
+import { useWorkflowContext } from '../../../App';
+import './ActionNodeBody.scss';
+
+interface ActionNodeBodyProps {
+  node: Node;
+  storeId: string;
+}
+
+const ActionNodeBody: Component<ActionNodeBodyProps> = (props) => {
+  const [state, { upsertNode }] = useSolidFlowyStoreById(props.storeId);
+  const { actions } = useWorkflowContext();
+  const approvedActions = () => actions().filter((intent) => intent.status === 'APPROVED');
+
+  const handleActionChange = (newActionName: string) => {
+    if (props.node.data.intent === newActionName) return;
+
+    const updatedNode = {
+      ...props.node,
+      data: { ...props.node.data, action: newActionName },
+    };
+
+    upsertNode(updatedNode);
+  };
+
+  return (
+    <main class='action-node-body__main'>
+      <Autocomplete
+        options={approvedActions()}
+        getOptionKey={(option) => option.name as string}
+        getOptionLabel={(option) => option.displayName as string}
+        value={props.node.data.action}
+        onChange={handleActionChange}
+        placeholder="Action"
+      />
+    </main>
+  );
+};
+
+export default ActionNodeBody;

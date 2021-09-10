@@ -1,0 +1,26 @@
+.condition-node-body__table__row {
+  position: relative;
+}
+
+.condition-node-body__table__row--last {
+  .td {
+    border: none;
+  }
+}
+
+.condition-node-body__table__row__action-cell {
+  display: flex;
+  padding: 2px;
+  border-radius: 4px;
+
+  .CUI-IconButton {
+    width: 20px;
+    height: 20px;
+    padding: 6px;
+
+    .svg-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

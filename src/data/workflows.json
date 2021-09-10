@@ -1,0 +1,26 @@
+[
+  {
+    "id": "workflow-0",
+    "name": "ho_so_vay_von",
+    "displayName": "Hồ sơ vay vốn",
+    "status": "APPROVED"
+  },
+  {
+    "id": "workflow-1",
+    "name": "dieu_kien_vay_von",
+    "displayName": "Điều kiện vay vốn",
+    "status": "APPROVED"
+  },
+  {
+    "id": "workflow-2",
+    "name": "relative",
+    "displayName": "Relative",
+    "status": "APPROVED"
+  },
+  {
+    "id": "workflow-3",
+    "name": "predue_main",
+    "displayName": "Predue Main",
+    "status": "APPROVED"
+  }
+]

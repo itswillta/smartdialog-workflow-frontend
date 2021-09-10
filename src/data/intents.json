@@ -1,0 +1,32 @@
+[
+  {
+    "id": "intent-0",
+    "name": "dieu_kien_vay_von",
+    "displayName": "Điều kiện vay vốn",
+    "status": "APPROVED"
+  },
+  {
+    "id": "intent-1",
+    "name": "dieu_kien_vay_von_context_vay",
+    "displayName": "Điều kiện vay vốn (context vay)",
+    "status": "APPROVED"
+  },
+  {
+    "id": "intent-2",
+    "name": "dieu_kien_vay_von_context_muc_dich_vay",
+    "displayName": "Điều kiện vay vốn (context mục đích vay)",
+    "status": "APPROVED"
+  },
+  {
+    "id": "intent-3",
+    "name": "dieu_kien_vay_von_context_hinh_thuc_cho_vay",
+    "displayName": "Điều kiện vay vốn (context hình thức cho vay)",
+    "status": "APPROVED"
+  },
+  {
+    "id": "intent-4",
+    "name": "vi_tri_atm",
+    "displayName": "Vị trí ATM",
+    "status": "APPROVED"
+  }
+]

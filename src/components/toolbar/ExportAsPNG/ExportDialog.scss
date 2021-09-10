@@ -1,0 +1,55 @@
+.export-dialog__backdrop {
+  background: #000012;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.export-dialog__input-container {
+  display: flex;
+  align-items: center;
+
+  .export-dialog__input-container__text {
+    margin: 0 8px 0 0;
+
+    &.export-dialog__input-container__text--mL {
+      margin-left: 16px;
+    }
+  }
+
+  input {
+    width: 64px;
+    border-color: rgba(0, 0, 0, 0.23);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+.export-dialog__quality-container {
+  margin-top: 8px;
+
+  p {
+    margin: 0;
+    color: #616161;
+    font-size: 0.875rem;
+  }
+}
+
+.export-dialog__black-button {
+  margin-left: 8px;
+  background: #111;
+  color: #ffffff;
+
+  &:hover {
+    background: #000 !important;
+  }
+
+  &.CUI-Button--disabled {
+    background: rgba(0, 0, 0, 0.42) !important;
+    color: #ffffff;
+  }
+}

@@ -1,0 +1,17 @@
+.condition-node-body {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  flex-direction: column;
+}
+
+.condition-node-body__table {
+  border-collapse: inherit;
+  border: 1px solid #e9e9ef;
+  border-radius: 4px;
+
+  .td {
+    color: #253134;
+    padding: 2px;
+  }
+}

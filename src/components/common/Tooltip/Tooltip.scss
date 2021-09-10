@@ -1,0 +1,16 @@
+.CUI-Tooltip {
+  font-size: 0.625rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  background-color: rgba(97, 97, 97, 0.9);
+  border-radius: 4px;
+  max-width: 300px;
+  color: #ffffff;
+  opacity: 1;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 133ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  z-index: 999;
+
+  &.hidden {
+    opacity: 0;
+  }
+}
