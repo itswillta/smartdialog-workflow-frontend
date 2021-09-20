@@ -1,4 +1,5 @@
 import { Component } from 'solid-js';
+import { useI18n } from '@amoutonbrady/solid-i18n';
 
 import Autocomplete from '../../../common/Autocomplete/Autocomplete';
 import FilledInput from '../../../common/FilledInput/FilledInput';
@@ -9,6 +10,8 @@ import '../ConditionNodeBody.scss';
 import '../ConditionRow.scss';
 
 const ConditionTable: Component = () => {
+  const [t] = useI18n();
+
   return (
     <table class="condition-node-body__table" aria-label="condition table">
       <tbody>
@@ -24,7 +27,7 @@ const ConditionTable: Component = () => {
               getOptionKey={(option) => option}
               getOptionLabel={(option) => option}
               value={''}
-              placeholder="Parameter"
+              placeholder={t('parameter')}
               fixedWidth="144px"
             />
           </td>

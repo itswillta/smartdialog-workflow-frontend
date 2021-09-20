@@ -6,5 +6,11 @@ export default defineConfig({
   build: {
     target: 'esnext',
     polyfillDynamicImport: false,
+    lib: {
+      entry: './src/index.tsx',
+      name: 'SmartdialogWorkflowFrontend',
+      fileName: 'smartdialog-workflow-frontend',
+      formats: ['es'],
+    },
   },
 });

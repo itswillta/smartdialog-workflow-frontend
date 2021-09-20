@@ -1,5 +1,6 @@
 import { Component, createMemo } from 'solid-js';
 import { Node, useSolidFlowyStoreById } from 'solid-flowy/lib';
+import { useI18n } from '@amoutonbrady/solid-i18n';
 
 import Autocomplete from '../../common/Autocomplete/Autocomplete';
 import { useWorkflowContext } from '../../../App';
@@ -11,6 +12,7 @@ interface SubWorkflowNodeBodyProps {
 }
 
 const SubWorkflowNodeBody: Component<SubWorkflowNodeBodyProps> = (props) => {
+  const [t] = useI18n();
   const [state, { upsertNode }] = useSolidFlowyStoreById(props.storeId);
   const { workflows } = useWorkflowContext();
   const approvedWorkflows = createMemo(() => workflows().filter((workflow) => workflow.status === 'APPROVED'));
@@ -34,7 +36,7 @@ const SubWorkflowNodeBody: Component<SubWorkflowNodeBodyProps> = (props) => {
         getOptionLabel={(option) => option.displayName}
         value={props.node.data.workflow}
         onChange={handleWorkflowChange}
-        placeholder="Workflow"
+        placeholder={t('subWorkflow')}
       />
     </main>
   );

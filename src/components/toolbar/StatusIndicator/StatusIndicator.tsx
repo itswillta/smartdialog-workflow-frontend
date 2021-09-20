@@ -8,7 +8,7 @@ import InvalidStatusPopoverContent from './InvalidStatusPopoverContent';
 import WarningStatusPopoverContent from './WarningStatusPopoverContent';
 import WarningIndicator from '../../icons/WarningIndicator';
 import IconButton from '../../common/IconButton/IconButton';
-import Menu from '../../common/Menu/Menu';
+import Popover from '../../common/Popover/Popover';
 import './StatusIndicator.scss';
 
 interface StatusIndicatorProps {
@@ -43,7 +43,7 @@ const StatusIndicator: Component<StatusIndicatorProps> = (props) => {
           </Match>
         </Switch>
       </IconButton>
-      <Menu isOpen={isPopoverOpen()} anchorEl={anchorEl} onClickAway={handleClose} placement="bottom-start">
+      <Popover isOpen={isPopoverOpen()} anchorEl={anchorEl} onClose={handleClose} placement="bottom-start">
         <Switch>
           <Match when={statusState.status === WorkflowStatus.VALID}>
             <ValidStatusPopoverContent />
@@ -55,7 +55,7 @@ const StatusIndicator: Component<StatusIndicatorProps> = (props) => {
             <WarningStatusPopoverContent />
           </Match>
         </Switch>
-      </Menu>
+      </Popover>
     </>
   );
 };

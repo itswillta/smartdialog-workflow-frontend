@@ -28,6 +28,9 @@ const useEnsureEdgePositions = ({ node, storeId }: { node: Node, storeId: string
             return;
 
           const targetNode = getTargetNode(storeId)(outcomingEdge);
+
+          if (!targetNode) return;
+
           const newWaypoints = connectShapes(
             { ...getRectangleFromNode(node), ...node.shapeData },
             { ...getRectangleFromNode(targetNode), ...targetNode.shapeData },
@@ -46,6 +49,9 @@ const useEnsureEdgePositions = ({ node, storeId }: { node: Node, storeId: string
             return;
 
           const sourceNode = getSourceNode(storeId)(incomingEdge);
+
+          if (!sourceNode) return;
+
           const newWaypoints = connectShapes(
             { ...getRectangleFromNode(sourceNode), ...sourceNode.shapeData },
             { ...getRectangleFromNode(node), ...node.shapeData },
@@ -55,7 +61,7 @@ const useEnsureEdgePositions = ({ node, storeId }: { node: Node, storeId: string
 
           upsertEdge({ ...incomingEdge, waypoints: newWaypoints });
         });
-      } else {
+      } else if (node.height > previousNodeHeight) {
         getOutgoingEdges(storeId)(node).forEach(outcomingEdge => {
           if (
             outcomingEdge.waypoints[0].y <
@@ -63,6 +69,9 @@ const useEnsureEdgePositions = ({ node, storeId }: { node: Node, storeId: string
           )
             return;
           const targetNode = getTargetNode(storeId)(outcomingEdge);
+
+          if (!targetNode) return;
+
           const newWaypoints = connectShapes(
             { ...getRectangleFromNode(node), ...node.shapeData },
             { ...getRectangleFromNode(targetNode), ...targetNode.shapeData },
@@ -81,6 +90,9 @@ const useEnsureEdgePositions = ({ node, storeId }: { node: Node, storeId: string
             return;
 
           const sourceNode = getSourceNode(storeId)(incomingEdge);
+
+          if (!sourceNode) return;
+
           const newWaypoints = connectShapes(
             { ...getRectangleFromNode(sourceNode), ...sourceNode.shapeData },
             { ...getRectangleFromNode(node), ...node.shapeData },

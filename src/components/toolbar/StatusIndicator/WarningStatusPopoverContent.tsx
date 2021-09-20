@@ -4,6 +4,7 @@ import { useI18n } from '@amoutonbrady/solid-i18n';
 import WarningIndicator from '../../icons/WarningIndicator';
 import { useStatusStore } from '../../../store/status.store';
 import Button from '../../common/Button/Button';
+import './WarningStatusPopoverContent.scss';
 
 const WarningStatusPopoverContent = () => {
   const [t] = useI18n();

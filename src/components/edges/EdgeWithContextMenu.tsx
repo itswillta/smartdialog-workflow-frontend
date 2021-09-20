@@ -28,11 +28,9 @@ const EdgeWithContextMenu: Component<EdgeWithContextMenuProps> = (props) => {
 
     setMouseX(event.clientX);
     setMouseY(event.clientY);
-    console.log('open now!!!');
   };
 
   const handleClose = () => {
-    console.log('closed!!!');
     setMouseX(null);
     setMouseY(null);
   };
@@ -72,7 +70,7 @@ const EdgeWithContextMenu: Component<EdgeWithContextMenuProps> = (props) => {
         anchorPosition={
           !!mouseX && !!mouseY ? { top: mouseY(), left: mouseX() } : undefined
         }
-        onClickAway={handleClose}
+        onClose={handleClose}
       >
         <MenuItem onClick={handleResetWaypoints}>
           Reset waypoints

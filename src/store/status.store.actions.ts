@@ -99,12 +99,23 @@ export const detectWarningStatus = (storeId: string) => (nodes: Node[], edges: E
   const nodesWithWarning = [];
 
   conditionNodes.forEach(conditionNode => {
-    const outcomingEdges = getOutgoingEdges(storeId)(conditionNode);
+    if (
+      conditionNode.data &&
+      conditionNode.data.shouldShowNotAvailableParamWarning
+    ) {
+      nodesWithWarning.push({
+        id: conditionNode.id,
+        status: WorkflowStatus.WARNING,
+        message: 'notAvailableParamWarningMessage',
+      });
+    }
+
+    const outgoingEdges = getOutgoingEdges(storeId)(conditionNode);
 
     let doesTrueEdgeExist = false;
     let doesFalseEdgeExist = false;
 
-    outcomingEdges.forEach(outcomingEdge => {
+    outgoingEdges.forEach(outcomingEdge => {
       if (outcomingEdge.label === 'TRUE') doesTrueEdgeExist = true;
       else if (outcomingEdge.label === 'FALSE') doesFalseEdgeExist = true;
     });
@@ -113,7 +124,7 @@ export const detectWarningStatus = (storeId: string) => (nodes: Node[], edges: E
       nodesWithWarning.push({
         id: conditionNode.id,
         status: WorkflowStatus.WARNING,
-        message: 'There are unhandled conditions.',
+        message: 'unhandledConditionWarningMessage',
       });
     }
   });

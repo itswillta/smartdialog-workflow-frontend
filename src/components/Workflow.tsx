@@ -1,4 +1,4 @@
-import { Component, onCleanup, onMount } from 'solid-js';
+import { Component, createEffect, onCleanup, onMount } from 'solid-js';
 import {
   DraggableSolidFlowy,
   addMarkerDefinition,
@@ -10,6 +10,8 @@ import {
   registerIsPointInShapeFunction,
   registerShapeAsTRBLFunction,
   getSelectedElement,
+  getOutgoingEdges,
+  getTargetNode,
 } from 'solid-flowy/lib';
 
 import IntentNode from './nodes/IntentNode/IntentNode';
@@ -23,6 +25,14 @@ import SubWorkflowNode from './nodes/SubWorkflowNode/SubWorkflowNode';
 import { hexagonAsTRBL } from '../utils/trbl';
 import { isPointInHexagon } from '../utils/shape';
 import { getDockingPointForHexagon } from '../utils/docking';
+import { useWorkflowContext } from '../App';
+import ConditionEdgeWithContextMenu from './edges/ConditionEdgeWithContextMenu';
+import LoopEndEdgeWithContextMenu from './edges/LoopEndEdgeWithContextMenu';
+import { ensureCorrectState } from '../state/ensureCorrectState';
+import { activateAutosave, enableAutosave } from '../state/autosave';
+import { trackStatus } from '../store/status.store';
+import { isNodeInInfiniteLoop, isNodeInLoop } from '../utils/nodes';
+import { registerNodeDropValidator } from './sidebar/DraggableBlock';
 
 const nodeTypes = {
   intentNode: IntentNode,
@@ -37,77 +47,9 @@ const nodeTypes = {
 const edgeTypes = {
   standardEdge: StandardEdge,
   edgeWithStartIndicator: EdgeWithStartIndicatorWithContextMenu,
+  conditionEdge: ConditionEdgeWithContextMenu,
+  loopEndEdge: LoopEndEdgeWithContextMenu,
 };
-
-const graphElements = [
-  {
-    id: '0',
-    type: 'startNode',
-    position: {
-      x: 80,
-      y: 80,
-    },
-    shapeType: 'circle',
-  },
-  {
-    id: '5',
-    type: 'conditionNode',
-    data: {
-      conditions: [{ parameter: '', operator: '', value: '' }],
-    },
-    position: {
-      x: 400,
-      y: 600,
-    },
-    shapeType: 'hexagon',
-    shapeData: {
-      topPeakHeight: 39,
-      bottomPeakHeight: 39,
-    },
-  },
-  {
-    id: '1',
-    type: 'intentNode',
-    data: {
-      intent: 'dieu_kien_vay_von',
-    },
-    position: {
-      x: 80,
-      y: 400,
-    },
-    shapeType: 'rectangle',
-  },
-  {
-    id: '2',
-    type: 'globalTerminateNode',
-    position: {
-      x: 480,
-      y: 200,
-    },
-    shapeType: 'circle',
-  },
-  {
-    id: '3',
-    type: 'localTerminateNode',
-    position: {
-      x: 1120,
-      y: 200,
-    },
-    shapeType: 'circle',
-  },
-  {
-    id: '4',
-    type: 'actionNode',
-    data: {
-      action: 'xac_nhan_muc_dich_cho_vay',
-    },
-    position: {
-      x: 640,
-      y: 400,
-    },
-    shapeType: 'rectangle',
-  },
-];
 
 registerGetDockingPointFunction('hexagon')(getDockingPointForHexagon);
 registerIsPointInShapeFunction('hexagon')(isPointInHexagon);
@@ -118,7 +60,8 @@ interface WorkflowProps {
 }
 
 const Workflow: Component<WorkflowProps> = (props) => {
-  const [state, { setElements, unselectAllElements, deleteElementById }] = useSolidFlowyStoreById(props.storeId);
+  const [state, { setElements, unselectAllElements, deleteElementById, registerNodeValidator }] = useSolidFlowyStoreById(props.storeId);
+  const { workflow } = useWorkflowContext();
 
   const handleLoad = () => {
     addMarkerDefinition(
@@ -132,17 +75,217 @@ const Workflow: Component<WorkflowProps> = (props) => {
       />
     );
 
-    const stringifiedElements = localStorage.getItem('elements');
+    addMarkerDefinition(
+      'solid-flowy__thinarrow--loop-end',
+      <polyline
+        class="solid-flowy__thinarrow--loop-end"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="1"
+        points="-10,-4 0,0 -10,4 -10,-4"
+      />,
+    );
 
-    if (!stringifiedElements) {
-      setElements(graphElements);
+    addMarkerDefinition(
+      'solid-flowy__thinarrow--error',
+      <polyline
+        class="solid-flowy__thinarrow--error"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="1"
+        points="-10,-4 0,0 -10,4 -10,-4"
+      />,
+    );
 
-      return;
+    if (Array.isArray(workflow())) {
+      setElements(workflow());
+    } else {
+      setElements([]);
     }
 
-    const elements = JSON.parse(stringifiedElements);
+    registerNodeValidator('intentNode')(
+      (sourceNode, targetNode, formingEdge) => {
+        if (
+          targetNode.id === sourceNode.id ||
+          targetNode.type === 'localTerminateNode' ||
+          targetNode.type === 'globalTerminateNode' ||
+          targetNode.type === 'startNode' ||
+          targetNode.type === 'intentNode'
+        )
+          return { isValid: false, reason: 'Invalid target node' };
 
-    setElements(elements);
+        if (targetNode.type === 'actionNode') {
+          let isThereConnectedActionNode = false;
+          const outgoingEdges = getOutgoingEdges(props.storeId)(sourceNode);
+
+          outgoingEdges.forEach(outgoingEdge => {
+            if (outgoingEdge.isForming) return;
+
+            const connectedNode = getTargetNode(props.storeId)(outgoingEdge);
+
+            if (connectedNode.type !== 'actionNode') return;
+
+            isThereConnectedActionNode = true;
+          });
+
+          if (isThereConnectedActionNode) {
+            return {
+              isValid: false,
+              reason: 'Cannot connect to many action nodes',
+            };
+          }
+        }
+
+        const isInInfiniteLoop = isNodeInInfiniteLoop(props.storeId, formingEdge)(sourceNode);
+
+        if (isInInfiniteLoop) {
+          return { isValid: false, reason: 'An infinite loop is not allowed' };
+        }
+
+        return { isValid: true };
+      },
+    );
+
+    registerNodeValidator('conditionNode')((sourceNode, targetNode) => {
+      if (
+        targetNode.id === sourceNode.id ||
+        targetNode.type === 'localTerminateNode' ||
+        targetNode.type === 'globalTerminateNode' ||
+        targetNode.type === 'startNode' ||
+        targetNode.type === 'intentNode'
+      )
+        return { isValid: false, reason: 'Invalid target node' };
+
+      const outgoingEdges = getOutgoingEdges(props.storeId)(sourceNode);
+
+      const isInLoop = isNodeInLoop(props.storeId)(sourceNode);
+
+      if (!isInLoop && outgoingEdges.length > 2) {
+        return {
+          isValid: false,
+          reason: 'A condition node can only have two outgoing edges',
+        };
+      }
+
+      if (isInLoop && outgoingEdges.length > 3) {
+        return {
+          isValid: false,
+          reason:
+            'A condition node in a loop can only have three outgoing edges',
+        };
+      }
+
+      return { isValid: true };
+    });
+
+    registerNodeValidator('actionNode')(
+      (sourceNode, targetNode, formingEdge) => {
+        if (targetNode.id === sourceNode.id || targetNode.type === 'startNode')
+          return { isValid: false, reason: 'Invalid target node' };
+
+        const existingOutgoingEdges = getOutgoingEdges(props.storeId)(
+          sourceNode,
+        ).filter(edge => edge.target !== targetNode.id && edge.target !== '?');
+
+        let isThereConnectedTerminateNode = false;
+        let isThereConnectedActionNode = false;
+
+        existingOutgoingEdges.forEach(outgoingEdge => {
+          const edgeTargetNode = getTargetNode(props.storeId)(outgoingEdge);
+
+          if (
+            edgeTargetNode.type === 'localTerminateNode' ||
+            edgeTargetNode.type === 'globalTerminateNode'
+          ) {
+            isThereConnectedTerminateNode = true;
+          }
+
+          if (edgeTargetNode.type === 'actionNode') {
+            isThereConnectedActionNode = true;
+          }
+        });
+
+        if (isThereConnectedActionNode && targetNode.type === 'actionNode') {
+          return {
+            isValid: false,
+            reason: 'Cannot connect to many action nodes',
+          };
+        }
+
+        if (
+          isThereConnectedTerminateNode &&
+          (targetNode.type === 'localTerminateNode' ||
+            targetNode.type === 'globalTerminateNode')
+        ) {
+          return {
+            isValid: false,
+            reason: 'There is already a connected terminate node',
+          };
+        }
+
+        const isInInfiniteLoop = isNodeInInfiniteLoop(props.storeId, formingEdge)(sourceNode);
+
+        if (isInInfiniteLoop) {
+          return { isValid: false, reason: 'An infinite loop is not allowed' };
+        }
+
+        return { isValid: true };
+      },
+    );
+
+    registerNodeValidator('startNode')((sourceNode, targetNode) => {
+      if (
+        targetNode.id === sourceNode.id ||
+        targetNode.type === 'localTerminateNode' ||
+        targetNode.type === 'globalTerminateNode' ||
+        targetNode.type === 'conditionNode' ||
+        targetNode.type === 'actionNode'
+      )
+        return { isValid: false, reason: 'Invalid target node' };
+
+      return { isValid: true };
+    });
+
+    registerNodeValidator('subWorkflowNode')((sourceNode, targetNode) => {
+      if (targetNode.id === sourceNode.id || targetNode.type === 'startNode')
+        return { isValid: false, reason: 'Invalid target node' };
+
+      const existingOutgoingEdges = getOutgoingEdges(props.storeId)(
+        sourceNode,
+      ).filter(edge => edge.target !== targetNode.id && edge.target !== '?');
+
+      let isThereConnectedTerminateNode = false;
+
+      existingOutgoingEdges.forEach(outgoingEdge => {
+        const edgeTargetNode = getTargetNode(props.storeId)(outgoingEdge);
+
+        if (
+          edgeTargetNode.type === 'localTerminateNode' ||
+          edgeTargetNode.type === 'globalTerminateNode'
+        ) {
+          isThereConnectedTerminateNode = true;
+        }
+      });
+
+      if (
+        isThereConnectedTerminateNode &&
+        (targetNode.type === 'localTerminateNode' ||
+          targetNode.type === 'globalTerminateNode')
+      ) {
+        return {
+          isValid: false,
+          reason: 'There is already a connected terminate node',
+        };
+      }
+
+      return { isValid: true };
+    });
+
+    registerNodeDropValidator('startNode')(allNodes => {
+      if (allNodes.find(node => node.type === 'startNode')) return false;
+
+      return true;
+    });
   };
 
   const handleKeyUp = (event: KeyboardEvent) => {
@@ -162,6 +305,10 @@ const Workflow: Component<WorkflowProps> = (props) => {
   };
 
   onMount(() => {
+    ensureCorrectState(props.storeId);
+    activateAutosave(props.storeId);
+    enableAutosave(props.storeId);
+    trackStatus(props.storeId);
     document.addEventListener('keyup', handleKeyUp);
 
     onCleanup(() => {

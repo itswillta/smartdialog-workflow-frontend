@@ -2,6 +2,25 @@
   position: relative;
 }
 
+.condition-node-body__table__row__show-all-option {
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 14px;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &.condition-node-body__table__row__show-all-option--disabled {
+    cursor: default;
+    color: #9e9e9e;
+
+    &:hover {
+      background: transparent;
+    }
+  }
+}
+
 .condition-node-body__table__row--last {
   .td {
     border: none;

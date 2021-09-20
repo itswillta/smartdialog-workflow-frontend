@@ -30,7 +30,7 @@ const SaveStatus = () => {
     );
   }
 
-  if (autoSaveStatus() === 'success' || !autoSaveStatus) {
+  if (autoSaveStatus() === 'success' || !autoSaveStatus()) {
     return (
       <div class="save-status__container">
         <DoneIcon />

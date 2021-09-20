@@ -9,7 +9,7 @@ const ClickAwayListener: Component<ClickAwayListenerProps> = (props) => {
   const [local, others] = splitProps(props, ['children', 'onClickAway', 'additionalElements']);
   let divRef: HTMLDivElement;
 
-  const handleClick = (event: MouseEvent) => {
+  const handleMouseDown = (event: MouseEvent) => {
     const eventTarget = event.target as HTMLElement;
 
     if (divRef.contains(eventTarget) || eventTarget === divRef) return;
@@ -24,10 +24,10 @@ const ClickAwayListener: Component<ClickAwayListenerProps> = (props) => {
   };
 
   onMount(() => {
-    document.addEventListener('click', handleClick);
+    document.addEventListener('mousedown', handleMouseDown, { capture: true });
 
     onCleanup(() => {
-      document.removeEventListener('click', handleClick);
+      document.removeEventListener('mousedown', handleMouseDown, { capture: true });
     });
   });
 

@@ -6,22 +6,14 @@ import './Tooltip.scss';
 
 interface TooltipProps {
   title: string;
-  placement?: Placement;
+  placement?: 'up' | 'right' | 'down' | 'left';
 }
 
 const Tooltip: Component<TooltipProps> = (props) => {
-  props = mergeProps({ placement: 'bottom' }, props);
+  props = mergeProps({ placement: 'down' }, props);
   const [shouldShowTooltip, setShouldShowTooltip] = createSignal(false);
   let anchorEl: HTMLDivElement;
   let tooltipEl: HTMLDivElement;
-
-  onMount(() => {
-    const popper = createPopper(anchorEl, tooltipEl, { strategy: 'fixed', placement: props.placement })
-
-    onCleanup(() => {
-      popper.destroy();
-    });
-  });
 
   const handleMouseEnter = () => {
     setShouldShowTooltip(true);
@@ -32,14 +24,9 @@ const Tooltip: Component<TooltipProps> = (props) => {
   };
 
   return (
-    <>
-      <div ref={anchorEl} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        {props.children}
-      </div>
-      <Portal>
-        <div ref={tooltipEl} classList={{ 'CUI-Tooltip': true, 'hidden': !shouldShowTooltip() }}>{props.title}</div>
-      </Portal>
-    </>
+    <div ref={anchorEl} aria-label={props.title} data-balloon-pos={props.placement} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      {props.children}
+    </div>
   );
 };
 

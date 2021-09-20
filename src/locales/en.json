@@ -7,9 +7,7 @@
   "undo": "Undo",
   "redo": "Redo",
   "action": "Action",
-  "parameterName": "Paramater name",
-  "parameterValue": "Value",
-  "entity": "Entity",
+  "parameter": "Paramater",
   "value": "Value",
   "condition": "Condition",
   "intent": "Intent",
@@ -65,5 +63,10 @@
   "others": " Others",
   "noMatchingOption": "No matching option found",
   "margin": "Margin",
-  "infiniteLoopErrorMessage": "An infinite loop is not allowed."
+  "infiniteLoopErrorMessage": "An infinite loop is not allowed.",
+  "showAll": "Show all",
+  "showAvailableOnly": "Show available only",
+  "unhandledConditionWarningMessage": "There are unhandled condition branch(es).",
+  "notAvailableParamWarningMessage": "There are unavailable parameters being used.",
+  "delete": "Delete"
 }

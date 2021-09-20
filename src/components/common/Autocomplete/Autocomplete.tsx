@@ -1,3 +1,4 @@
+import { useI18n } from '@amoutonbrady/solid-i18n';
 import {
   Component,
   createEffect,
@@ -15,6 +16,7 @@ import { Dynamic } from 'solid-js/web';
 import ArrowDropDownIcon from '../../icons/ArrowDropDownIcon';
 import ClickAwayListener from '../ClickAwayListener/ClickAwayListener';
 import FilledInput from '../FilledInput/FilledInput';
+import Popover from '../Popover/Popover';
 import './Autocomplete.scss';
 
 interface AutocompleteProps<T = any> {
@@ -27,14 +29,27 @@ interface AutocompleteProps<T = any> {
   fixedWidth?: string;
   shouldShowFullOptions?: boolean;
   onSelectChildren?: () => void;
+  isSmall?: boolean;
+  shouldAllowFreeInput?: boolean;
 }
 
 const Autocomplete: Component<AutocompleteProps> = (props) => {
-  props = mergeProps({ fixedWidth: '244px', shouldShowFullOptions: false, placeholder: '' }, props);
+  props = mergeProps(
+    { fixedWidth: '244px', shouldShowFullOptions: false, placeholder: '', isSmall: false, shouldAllowFreeInput: false },
+    props
+  );
+  const [t] = useI18n();
   const [selectedIndex, setSelectedIndex] = createSignal(-1);
   const [inputValue, setInputValue] = createSignal('');
   const [shouldShowDropdown, setShouldShowDropdown] = createSignal(false);
   let dropdownRef: HTMLDivElement;
+  let inputRef: HTMLInputElement;
+
+  createEffect(() => {
+    if (props.value !== '' && inputValue() === '') {
+      setInputValue(props.value);
+    }
+  });
 
   createEffect(() => {
     if (props.value === '') return setInputValue('');
@@ -49,8 +64,8 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
   const handleInputChange: JSX.DOMAttributes<HTMLInputElement>['onInput'] = (event) => {
     setInputValue(event.currentTarget.value);
 
-    if (event.currentTarget.value === '') {
-      if (typeof props.onChange === 'function') props.onChange('');
+    if (event.currentTarget.value === '' || props.shouldAllowFreeInput) {
+      if (typeof props.onChange === 'function') props.onChange(event.currentTarget.value);
     }
   };
 
@@ -103,7 +118,7 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
       if (props.getOptionKey(finalOption) !== props.value) {
         if (typeof props.onChange === 'function') props.onChange(props.getOptionKey(finalOption));
       }
-    } else {
+    } else if (!props.shouldAllowFreeInput) {
       setInputValue('');
     }
   };
@@ -128,6 +143,7 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
             classList={{
               'CUI-Autocomplete__drop-down__item': true,
               'CUI-Autocomplete__drop-down__item--selected': selectedKey === key,
+              'CUI-Autocomplete__drop-down__item--small': !!props.isSmall,
             }}
             onMouseDown={handleSelectItem(option)}
           >
@@ -174,7 +190,7 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
     setShouldShowDropdown(true);
   };
 
-  const handleClickAway = () => {
+  const handleClose = () => {
     if (shouldShowDropdown) closeDropdown();
   };
 
@@ -193,14 +209,13 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
   });
 
   return (
-    <ClickAwayListener
-      class="CUI-Autocomplete"
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onClickAway={handleClickAway}
-    >
+    <div class="CUI-Autocomplete" onMouseDown={handleMouseDown} onMouseMove={handleMouseMove}>
       <FilledInput
-        class="CUI-Autocompelete__input"
+        ref={inputRef}
+        classList={{
+          'CUI-Autocomplete__input': true,
+          'CUI-Autocomplete__input--small': !!props.isSmall,
+        }}
         placeholder={props.placeholder}
         value={inputValue()}
         onInput={handleInputChange}
@@ -208,12 +223,35 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
         onKeyDown={handleInputKeyDown}
         width={props.fixedWidth}
       />
-      <ArrowDropDownIcon class="CUI-Autocomplete__drop-down-icon" />
-      <Show when={shouldShowDropdown()}>
-        <div ref={dropdownRef} class="CUI-Autocomplete__drop-down" style={{ width: props.fixedWidth }}>
+      <Show when={!props.shouldAllowFreeInput}>
+        <ArrowDropDownIcon
+          classList={{
+            'CUI-Autocomplete__drop-down-icon': true,
+            'CUI-Autocomplete__drop-down-icon--small': !!props.isSmall,
+          }}
+        />
+      </Show>
+      <Popover isOpen={shouldShowDropdown()} onClose={handleClose} anchorEl={inputRef} placement="bottom-start">
+        <div
+          ref={dropdownRef}
+          classList={{
+            'CUI-Autocomplete__drop-down': true,
+            'CUI-Autocomplete__drop-down--hidden': !dropdownItems().length && props.shouldAllowFreeInput,
+          }}
+          style={{ width: props.fixedWidth }}
+        >
           <Show
             when={dropdownItems().length > 0}
-            fallback={<div class="CUI-Autocomplete__drop-down__no-matching-option">No matching option found</div>}
+            fallback={
+              <div
+                classList={{
+                  'CUI-Autocomplete__drop-down__no-matching-option': true,
+                  'CUI-Autocomplete__drop-down__no-matching-option--small': !!props.isSmall,
+                }}
+              >
+                {t('noMatchingOption')}
+              </div>
+            }
           >
             <For each={dropdownItems()}>{(dropdownItem) => <Dynamic component={dropdownItem.Component} />}</For>
           </Show>
@@ -225,8 +263,8 @@ const Autocomplete: Component<AutocompleteProps> = (props) => {
             </div>
           </Show>
         </div>
-      </Show>
-    </ClickAwayListener>
+      </Popover>
+    </div>
   );
 };
 

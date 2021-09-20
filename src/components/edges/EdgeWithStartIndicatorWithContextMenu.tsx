@@ -1,5 +1,6 @@
 import { Component } from 'solid-js';
-import { EdgeProps } from '../../../../solid-flowy/lib';
+import { EdgeProps } from 'solid-flowy/lib';
+
 import EdgeWithContextMenu from './EdgeWithContextMenu';
 import EdgeWithStartIndicator from './EdgeWithStartIndicator';
 

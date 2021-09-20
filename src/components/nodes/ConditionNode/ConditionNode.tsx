@@ -1,9 +1,5 @@
-import {
-  eventPointToCanvasCoordinates,
-  getCanvas,
-  isPointInShape,
-  useSolidFlowyStoreById,
-} from 'solid-flowy/lib';
+import { eventPointToCanvasCoordinates, getCanvas, isPointInShape, useSolidFlowyStoreById } from 'solid-flowy/lib';
+import { useI18n } from '@amoutonbrady/solid-i18n';
 
 import ConditionNodeHeader from './ConditionNodeHeader';
 import ConditionNodeBody from './ConditionNodeBody';
@@ -17,23 +13,32 @@ import IconButton from '../../common/IconButton/IconButton';
 import MoreHorizIcon from '../../icons/MoreHorizIcon';
 import Menu from '../../common/Menu/Menu';
 import MenuItem from '../../common/Menu/MenuItem';
+import DashedLoopIcon from '../../icons/DashedLoop';
+import Autocomplete from '../../common/Autocomplete/Autocomplete';
+import { useStatusStore } from '../../../store/status.store';
+import ProblemPopover from '../../problemPopover/ProblemPopover';
 import './ConditionNode.scss';
 
+const conditionOperators = ['AND', 'OR'];
+
 const ConditionNode: Component<NodeComponentProps> = (props) => {
+  const [t] = useI18n();
   const [state, { upsertNode, deleteElementById }] = useSolidFlowyStoreById(props.storeId);
-  const outcomingEdges = createMemo(() => Object.values(state.edges).filter(edge => edge.source === props.node.id))
-  const isThereOutcomingEdgeWithTrueLabel = createMemo(() => outcomingEdges().find(
-    edge => !edge.isForming && edge.label === 'TRUE',
-  ));
-  const isThereOutcomingEdgeWithFalseLabel = createMemo(() => outcomingEdges().find(
-    edge => !edge.isForming && edge.label === 'FALSE',
-  ));
+  const outcomingEdges = createMemo(() => Object.values(state.edges).filter((edge) => edge.source === props.node.id));
+  const isThereOutcomingEdgeWithTrueLabel = createMemo(() =>
+    outcomingEdges().find((edge) => !edge.isForming && edge.label === 'TRUE')
+  );
+  const isThereOutcomingEdgeWithFalseLabel = createMemo(() =>
+    outcomingEdges().find((edge) => !edge.isForming && edge.label === 'FALSE')
+  );
   const isInLoop = createMemo(() => isNodeInLoop(props.storeId)(props.node));
   const [isMenuOpen, setIsMenuOpen] = createSignal(false);
+  const [statusState] = useStatusStore();
+  const problematicNode = createMemo(() => statusState.problematicNodes.find((pN) => pN.id === props.node.id));
   let anchorEl: HTMLButtonElement;
   useEnsureEdgePositions({ node: props.node, storeId: props.storeId });
 
-  const handleLoopCountChange = event => {
+  const handleLoopCountChange = (event) => {
     /* eslint-disable no-restricted-globals */
     if (isNaN(event.target.value)) return;
 
@@ -54,17 +59,15 @@ const ConditionNode: Component<NodeComponentProps> = (props) => {
     upsertNode(newNode);
   };
 
-  createEffect(
-    () => {
-      if (!isInLoop()) return;
+  createEffect(() => {
+    if (!isInLoop()) return;
 
-      if (props.node.data.loopCount) return;
+    if (props.node.data.loopCount) return;
 
-      const newNode = { ...props.node, data: { ...props.node.data, loopCount: 1 } };
+    const newNode = { ...props.node, data: { ...props.node.data, loopCount: 1 } };
 
-      upsertNode(newNode);
-    },
-  );
+    upsertNode(newNode);
+  });
 
   const handleDelete = () => {
     deleteElementById(props.node.id);
@@ -81,49 +84,38 @@ const ConditionNode: Component<NodeComponentProps> = (props) => {
       ...props.node.shapeData,
     };
 
-    if (
-      !isPointInShape(props.node.shapeType)(
-        eventPointToCanvasCoordinates(event)(canvas),
-        nodeShape,
-      )
-    ) {
+    if (!isPointInShape(props.node.shapeType)(eventPointToCanvasCoordinates(event)(canvas), nodeShape)) {
       event.stopPropagation();
     }
   };
 
-  createEffect(
-    () => {
-      if (isInLoop()) return;
+  createEffect(() => {
+    if (isInLoop()) return;
 
-      const breakLoopEdge = outcomingEdges().find(
-        outcomingEdge => outcomingEdge.type === 'loopEndEdge',
-      );
+    const breakLoopEdge = outcomingEdges().find((outcomingEdge) => outcomingEdge.type === 'loopEndEdge');
 
-      if (!breakLoopEdge) return;
+    if (!breakLoopEdge) return;
 
-      deleteElementById(breakLoopEdge.id);
-    }
-  );
+    deleteElementById(breakLoopEdge.id);
+  });
 
-  const additionalEdgeProps = createMemo(
-    () => {
-      let nextEdgeLabel = 'TRUE';
+  const additionalEdgeProps = createMemo(() => {
+    let nextEdgeLabel = 'TRUE';
 
-      if (isThereOutcomingEdgeWithTrueLabel()) {
-        if (!isThereOutcomingEdgeWithFalseLabel()) {
-          nextEdgeLabel = 'FALSE';
-        } else if (isInLoop) {
-          return {
-            type: 'loopEndEdge',
-            arrowHeadType: 'thinarrow--loop-end',
-            label: `Loop count > ${props.node.data.loopCount}`,
-          };
-        }
+    if (isThereOutcomingEdgeWithTrueLabel()) {
+      if (!isThereOutcomingEdgeWithFalseLabel()) {
+        nextEdgeLabel = 'FALSE';
+      } else if (isInLoop) {
+        return {
+          type: 'loopEndEdge',
+          arrowHeadType: 'thinarrow--loop-end',
+          label: `Loop count > ${props.node.data.loopCount}`,
+        };
       }
-
-      return { label: nextEdgeLabel };
     }
-  );
+
+    return { label: nextEdgeLabel };
+  });
 
   const handleInputMouseDown = (event: MouseEvent) => {
     event.stopPropagation();
@@ -137,12 +129,17 @@ const ConditionNode: Component<NodeComponentProps> = (props) => {
     setIsMenuOpen(true);
   };
 
+  const handleConditionOperatorChange = (newConditionOperator: string) => {
+    const newNode = {
+      ...props.node,
+      data: { ...props.node.data, conditionOperator: newConditionOperator },
+    };
+
+    upsertNode(newNode);
+  };
+
   return (
-    <ConditionNodeContainer
-      node={props.node}
-      additionalEdgeProps={additionalEdgeProps()}
-      storeId={props.storeId}
-    >
+    <ConditionNodeContainer node={props.node} additionalEdgeProps={additionalEdgeProps()} storeId={props.storeId}>
       <div
         classList={{
           'condition-node__container': true,
@@ -188,38 +185,60 @@ const ConditionNode: Component<NodeComponentProps> = (props) => {
         </svg>
         <ConditionNodeHeader />
         <ConditionNodeBody node={props.node} storeId={props.storeId} />
-        <footer class='condition-node__footer'>
-          <div>
+        <footer class="condition-node__footer">
+          <div class="condition-node__footer__main-container">
             <Show when={isInLoop()}>
-            <Tooltip title="Maximum loop count">
-                <input
-                  value={props.node.data.loopCount}
-                  class='condition-node__footer-loop-count-input'
-                  onChange={handleLoopCountChange}
-                  onMouseDown={handleInputMouseDown}
-                  onMouseMove={handleInputMouseMove}
-                />
+              <Tooltip title="Maximum loop count">
+                <div class="condition-node__footer__main-container__loop-container">
+                  <DashedLoopIcon class="condition-node__footer__main-container__loop-container__loop-icon" />
+                  <input
+                    value={props.node.data.loopCount}
+                    class="condition-node__footer__main-container__loop-container__loop-count-input"
+                    onChange={handleLoopCountChange}
+                    onMouseDown={handleInputMouseDown}
+                    onMouseMove={handleInputMouseMove}
+                  />
+                </div>
+              </Tooltip>
+            </Show>
+            <Show
+              when={
+                props.node.data && Array.isArray(props.node.data.conditions) && props.node.data.conditions.length > 1
+              }
+            >
+              <Tooltip title={t('conditionOperator')}>
+                <div class="condition-node__footer__main-container__condition-operator-container">
+                  <Autocomplete
+                    options={conditionOperators}
+                    getOptionKey={(option) => option}
+                    getOptionLabel={(option) => option}
+                    value={props.node.data.conditionOperator}
+                    onChange={handleConditionOperatorChange}
+                    shouldShowFullOptions
+                    fixedWidth="48px"
+                    isSmall
+                  />
+                </div>
               </Tooltip>
             </Show>
           </div>
           <div>
             <IconButton
               ref={anchorEl}
-              class='condition-node__foter-more-options-button'
+              class="condition-node__footer__more-options-button"
               aria-label="more options"
               onClick={handleOpenMenu}
             >
               <MoreHorizIcon />
             </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              isOpen={isMenuOpen()}
-              onClickAway={() => setIsMenuOpen(false)}
-            >
-              <MenuItem onClick={handleDelete}>Delete</MenuItem>
+            <Menu anchorEl={anchorEl} isOpen={isMenuOpen()} onClose={() => setIsMenuOpen(false)}>
+              <MenuItem onClick={handleDelete}>{t('delete')}</MenuItem>
             </Menu>
           </div>
         </footer>
+        <Show when={statusState.shouldShowInvalidNodes && problematicNode()}>
+          <ProblemPopover status={problematicNode().status} message={problematicNode().message} />
+        </Show>
       </div>
     </ConditionNodeContainer>
   );

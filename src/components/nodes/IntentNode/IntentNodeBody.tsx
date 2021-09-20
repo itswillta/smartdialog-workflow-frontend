@@ -1,9 +1,10 @@
-import { Component } from 'solid-js';
+import { Component, createMemo } from 'solid-js';
 import { Node, useSolidFlowyStoreById } from 'solid-flowy/lib';
 
 import Autocomplete from '../../common/Autocomplete/Autocomplete';
 import { useWorkflowContext } from '../../../App';
 import './IntentNodeBody.scss';
+import { useI18n } from '@amoutonbrady/solid-i18n';
 
 interface IntentNodeBodyProps {
   node: Node;
@@ -11,9 +12,10 @@ interface IntentNodeBodyProps {
 }
 
 const IntentNodeBody: Component<IntentNodeBodyProps> = (props) => {
+  const [t] = useI18n();
   const [state, { upsertNode }] = useSolidFlowyStoreById(props.storeId);
   const { intents } = useWorkflowContext();
-  const approvedIntents = () => intents().filter((intent) => intent.status === 'APPROVED');
+  const approvedIntents = createMemo(() => intents().filter((intent) => intent.status === 'APPROVED'));
 
   const handleActionChange = (newIntentName: string) => {
     if (props.node.data.intent === newIntentName) return;
@@ -27,14 +29,14 @@ const IntentNodeBody: Component<IntentNodeBodyProps> = (props) => {
   };
 
   return (
-    <main class='intent-node-body__main'>
+    <main class="intent-node-body__main">
       <Autocomplete
         options={approvedIntents()}
         getOptionKey={(option) => option.name as string}
         getOptionLabel={(option) => option.displayName as string}
         value={props.node.data.intent}
         onChange={handleActionChange}
-        placeholder="Intent"
+        placeholder={t('intent')}
       />
     </main>
   );

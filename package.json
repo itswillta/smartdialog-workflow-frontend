@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:watch": "vite build --watch",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "postinstall": "vite build"
   },
   "license": "MIT",
   "devDependencies": {
@@ -20,7 +21,8 @@
     "@amoutonbrady/solid-i18n": "^0.4.0",
     "@popperjs/core": "^2.9.3",
     "html-to-image": "^1.7.0",
-    "solid-flowy": "0.0.2",
+    "path-intersection": "^2.2.1",
+    "solid-flowy": "^0.0.12",
     "solid-js": "^1.0.7",
     "uuid": "^8.3.2"
   }

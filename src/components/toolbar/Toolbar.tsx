@@ -26,12 +26,6 @@ const getScaleFromZoomInputValue = (zoomInputValue: string) => +zoomInputValue.r
 let zoomInputTimeout: number;
 
 interface ToolbarProps {
-  handleClose: () => void;
-  handleUpdateWorkflow: Function;
-  workflowBasicData: Record<string, unknown>;
-  workflowId: string;
-  fetchWorkflow: () => Promise<void>;
-  agentId: string;
   storeId: string;
 }
 
@@ -163,6 +157,7 @@ const Toolbar: Component<ToolbarProps> = (props) => {
       </Tooltip>
       <ExportAsPNG storeId={props.storeId} />
       <FocusCenter storeId={props.storeId} />
+      <ScriptGenerator storeId={props.storeId} />
       <Show
         when={isFullscreen()}
         fallback={

@@ -45,6 +45,7 @@ const InvalidStatusPopoverContent: Component<InvalidStatusPopoverContentProps> =
           <strong>{t('workflowInvalidSubtitle')}</strong>
         </p>
         <p class="invalid-status-popover-content__body__description">{t('workflowInvalidDescription')}</p>
+        <div class="invalid-status-popover-content__body__actions">
         <Show
           when={statusState.shouldShowInvalidNodes}
           fallback={
@@ -78,6 +79,7 @@ const InvalidStatusPopoverContent: Component<InvalidStatusPopoverContentProps> =
         >
           {autoSaveStatus() === 'loading' ? t('saving') : t('forceSave')}
         </Button>
+        </div>
       </section>
     </div>
   );

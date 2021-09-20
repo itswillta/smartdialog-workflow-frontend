@@ -2,7 +2,6 @@ import { StandardEdge, EdgeProps } from 'solid-flowy/lib';
 import { Component, splitProps } from 'solid-js';
 
 const EdgeWithStartIndicator: Component<EdgeProps> = (props) => {
-  console.log('EdgeWithStartIndicator props', { ...props });
   const [local, others] = splitProps(props, ['children', 'edge', 'storeId']);
 
   return (

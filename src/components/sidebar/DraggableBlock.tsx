@@ -1,5 +1,6 @@
 import { Component, createEffect, createSignal, Show } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
+import { useI18n } from '@amoutonbrady/solid-i18n';
 import {
   useSolidFlowyStoreById,
   eventPointToCanvasCoordinates,
@@ -33,6 +34,7 @@ interface DraggableBlockProps {
 }
 
 const DraggableBlock: Component<DraggableBlockProps> = (props) => {
+  const [t] = useI18n();
   const [state, { upsertNode }] = useSolidFlowyStoreById(props.storeId);
   const [isGrabbing, setIsGrabbing] = createSignal(false);
   const [dragX, setDragX] = createSignal(0);
@@ -122,7 +124,7 @@ const DraggableBlock: Component<DraggableBlockProps> = (props) => {
             </>
           }
         >
-          <Tooltip title={props.name}>
+          <Tooltip title={t(props.name)} placement="right">
             <span class="draggable-block__icon-group__block-type-icon">
               <Dynamic component={props.Icon} />
             </span>
@@ -131,8 +133,8 @@ const DraggableBlock: Component<DraggableBlockProps> = (props) => {
       </span>
       <Show when={!props.isMinimized}>
         <div class="draggable-block__text-container">
-          <h6 class="draggable-block__text-container__name">{props.name}</h6>
-          <p class="draggable-block__text-container__description">{props.description}</p>
+          <h6 class="draggable-block__text-container__name">{t(props.name)}</h6>
+          <p class="draggable-block__text-container__description">{t(props.description)}</p>
         </div>
       </Show>
       <Show when={isGrabbing()}>

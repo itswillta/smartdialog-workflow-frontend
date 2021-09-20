@@ -28,6 +28,10 @@
   margin: 0 0 12px 0;
 }
 
+.invalid-status-popover-content__body__actions {
+  display: flex;
+}
+
 .invalid-status-popover-content__body__show-errors-button {
   margin-right: 12px;
   font-size: 12px;
@@ -42,6 +46,6 @@
   color: #ffffff;
 
   &:hover {
-    background: #000000;
+    background: #000000 !important;
   }
 }

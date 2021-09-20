@@ -32,7 +32,7 @@ const ConditionHandles: Component<StandardHandlesProps> = (props) => {
         additionalEdgeProps={props.additionalEdgeProps}
         storeId={props.storeId}
       >
-        <div classList={{ 'solid-flowy__standard-handles__arrow--up': true, ...defaultClassList() }}>
+        <div classList={{ 'condition-handles__up-arrow': true, ...defaultClassList() }}>
           <Dynamic component={props.topHandleIndicator}>
             <UpArrow />
           </Dynamic>
@@ -56,7 +56,7 @@ const ConditionHandles: Component<StandardHandlesProps> = (props) => {
         additionalEdgeProps={props.additionalEdgeProps}
         storeId={props.storeId}
       >
-        <div classList={{ 'solid-flowy__standard-handles__arrow--down': true, ...defaultClassList() }}>
+        <div classList={{ 'condition-handles__down-arrow': true, ...defaultClassList() }}>
           <Dynamic component={props.bottomHandleIndicator}>
             <DownArrow />
           </Dynamic>

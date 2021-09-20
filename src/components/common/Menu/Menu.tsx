@@ -18,7 +18,7 @@ interface MenuProps extends JSX.HTMLAttributes<HTMLDivElement> {
   anchorPosition?: AnchorPosition;
   placement?: Placement;
   isOpen?: boolean;
-  onClickAway?: (event: MouseEvent) => void;
+  onClose?: () => void;
 }
 
 const Menu: Component<MenuProps> = (props) => {
@@ -29,7 +29,7 @@ const Menu: Component<MenuProps> = (props) => {
     'ref',
     'isOpen',
     'placement',
-    'onClickAway',
+    'onClose',
     'anchorPosition',
     'anchorReference',
     'class',
@@ -47,7 +47,7 @@ const Menu: Component<MenuProps> = (props) => {
   });
 
   const handleClickAway = (event: MouseEvent) => {
-    if (typeof props.onClickAway === 'function') props.onClickAway(event);
+    if (typeof props.onClose === 'function') props.onClose();
   };
 
   return (
@@ -70,19 +70,19 @@ const Menu: Component<MenuProps> = (props) => {
             style={{
               position: props.anchorReference === 'anchorPosition' ? 'fixed' : 'unset',
               top:
-                props.anchorReference === 'anchorPosition' &&
+                props.isOpen && props.anchorReference === 'anchorPosition' &&
                 props.anchorPosition.top &&
                 `${props.anchorPosition.top}px`,
               right:
-                props.anchorReference === 'anchorPosition' &&
+                props.isOpen && props.anchorReference === 'anchorPosition' &&
                 props.anchorPosition.right &&
                 `${props.anchorPosition.right}px`,
               bottom:
-                props.anchorReference === 'anchorPosition' &&
+                props.isOpen && props.anchorReference === 'anchorPosition' &&
                 props.anchorPosition.bottom &&
                 `${props.anchorPosition.bottom}px`,
               left:
-                props.anchorReference === 'anchorPosition' &&
+                props.isOpen && props.anchorReference === 'anchorPosition' &&
                 props.anchorPosition.left &&
                 `${props.anchorPosition.left}px`,
             }}

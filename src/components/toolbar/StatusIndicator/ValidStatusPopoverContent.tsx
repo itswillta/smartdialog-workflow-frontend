@@ -1,5 +1,7 @@
 import { useI18n } from '@amoutonbrady/solid-i18n';
+
 import ValidIndicator from '../../icons/ValidIndicator';
+import './ValidStatusPopoverContent.scss';
 
 const ValidStatusPopoverContent = () => {
   const [t] = useI18n();

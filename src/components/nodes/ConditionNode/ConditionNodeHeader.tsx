@@ -1,13 +1,16 @@
 import { Component } from 'solid-js';
+import { useI18n } from '@amoutonbrady/solid-i18n';
 
 import FilterAltIcon from '../../icons/FilterAltIcon';
 import './ConditionNodeHeader.scss';
 
 const ConditionNodeHeader: Component = () => {
+  const [t] = useI18n();
+
   return (
     <header class="condition-node-header">
       <FilterAltIcon class="condition-node-header__leading-icon" />
-      <h3 class="condition-node-header__title">Condition</h3>
+      <h3 class="condition-node-header__title">{t('condition')}</h3>
     </header>
   );
 };

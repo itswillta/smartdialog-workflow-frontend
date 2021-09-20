@@ -2,9 +2,16 @@
   position: relative;
 }
 
-.CUI-Autocompelete__input {
-  padding-right: 24px;
+.CUI-Autocomplete__input {
+  font-size: 14px;
+  padding: 2px 24px 2px 8px;
   text-overflow: ellipsis;
+
+  &.CUI-Autocomplete__input--small {
+    padding: 2px 4px;
+    font-size: 12px;
+    max-height: 20px;
+  }
 }
 
 .CUI-Autocomplete__drop-down {
@@ -15,7 +22,14 @@
   max-height: 244px;
   overflow-y: auto;
   z-index: 1;
-};
+
+  .CUI-Autocomplete__drop-down--hidden {
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
 
 .CUI-Autocomplete__drop-down__item {
   padding: 4px 8px;
@@ -23,9 +37,14 @@
   text-align: left;
   font-size: 14px;
   word-break: break-all;
-  
+
   &:hover {
-    background:#f5f5f5;
+    background: #f5f5f5;
+  }
+
+  &.CUI-Autocomplete__drop-down__item--small {
+    padding: 2px 4px;
+    font-size: 12px;
   }
 }
 
@@ -37,6 +56,11 @@
   font-size: 14px;
   padding: 4px 8px;
   text-align: left;
+
+  &.CUI-Autocomplete__drop-down__no-matching-option--small {
+    padding: 2px 4px;
+    font-size: 12px;
+  }
 }
 
 .CUI-Autocomplete__drop-down-icon {
@@ -45,4 +69,10 @@
   top: 0;
   color: rgba(0, 0, 0, 0.54);
   pointer-events: none;
+
+  &.CUI-Autocomplete__drop-down-icon--small {
+    right: 2px;
+    width: 20px;
+    height: 20px;
+  }
 }

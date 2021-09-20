@@ -18,49 +18,49 @@ import ForumIcon from '../icons/ForumIcon';
 import MenuIcon from '../icons/MenuIcon';
 import HelpIcon from '../icons/HelpIcon';
 import Button from '../common/Button/Button';
-import ExitToAppIcon from '../icons/ExitToAppicon';
+import ExitToAppIcon from '../icons/ExitToAppIcon';
 import Tooltip from '../common/Tooltip/Tooltip';
 import './Sidebar.scss';
 
 const draggableMainBlocks = [
   {
-    name: 'Start',
-    description: 'The entry point of the workflow',
+    name: 'start',
+    description: 'startNodeDescription',
     nodeType: 'startNode',
     Icon: CircleIcon,
     DragShell: StartNodeShell,
   },
   {
-    name: 'Intent',
-    description: 'An intent or action of a user',
+    name: 'intent',
+    description: 'intentNodeDescription',
     nodeType: 'intentNode',
     Icon: InputIcon,
     DragShell: IntentNodeShell,
   },
   {
-    name: 'Condition',
-    description: 'A condition of the parameter(s) in an intent',
+    name: 'condition',
+    description: 'conditionNodeDescription',
     nodeType: 'conditionNode',
     Icon: FilterAltIcon,
     DragShell: ConditionNodeShell,
   },
   {
-    name: 'Action',
-    description: 'An action of the bot',
+    name: 'action',
+    description: 'actionNodeDescription',
     nodeType: 'actionNode',
     Icon: FlashIcon,
     DragShell: ActionNodeShell,
   },
   {
-    name: 'Local Terminate',
-    description: 'The point where the current workflow terminates',
+    name: 'localTerminate',
+    description: 'localTerminateNodeDescription',
     nodeType: 'localTerminateNode',
     Icon: EmptyCircleIcon,
     DragShell: LocalTerminateNodeShell,
   },
   {
-    name: 'Global Terminate',
-    description: 'The point where all the workflows terminate',
+    name: 'globalTerminate',
+    description: 'globalTerminateNodeDescription',
     nodeType: 'globalTerminateNode',
     Icon: DoubleCircleIcon,
     DragShell: GlobalTerminateNodeShell,
@@ -165,7 +165,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
         <Show
           when={!isMinimized()}
           fallback={
-            <Tooltip title="Exit">
+            <Tooltip title="Exit" placement="right">
               <IconButton onClick={props.exitApp}>
                 <ExitToAppIcon />
               </IconButton>

@@ -1,11 +1,11 @@
 import { Node, useSolidFlowyStoreById } from 'solid-flowy/lib';
+import { useI18n } from '@amoutonbrady/solid-i18n';
 
 import FilledInput from '../../common/FilledInput/FilledInput';
-import operators from '../../../data/operators.json';
 import Autocomplete from '../../common/Autocomplete/Autocomplete';
 import { useWorkflowContext } from '../../../App';
 import { getAvailableParameters } from '../../../utils/conditions';
-import { Component, createMemo, Show } from 'solid-js';
+import { Component, createMemo, createSignal, Show } from 'solid-js';
 import Tooltip from '../../common/Tooltip/Tooltip';
 import IconButton from '../../common/IconButton/IconButton';
 import DeleteIcon from '../../icons/DeleteIcon';
@@ -21,7 +21,11 @@ interface ConditionRowProps {
   condition: Record<string, unknown>;
 }
 
+const operators = ['=', '!='];
+const numberOperators = ['>=', '<=', '>', '<'];
+
 const ConditionRow: Component<ConditionRowProps> = (props) => {
+  const [t] = useI18n();
   const { intents, slots, actions } = useWorkflowContext();
   const [state, { upsertNode }] = useSolidFlowyStoreById(props.storeId);
   const availableParams = createMemo(() =>
@@ -33,7 +37,14 @@ const ConditionRow: Component<ConditionRowProps> = (props) => {
       actions: actions(),
     })
   );
-  const currentParam = createMemo(() => availableParams().find((param) => param.id === props.condition.parameter));
+  const isSelectedParamNotInAvailableList = createMemo(
+    () => props.condition.parameter && !availableParams().find(({ name }) => name === props.condition.parameter)
+  );
+  const [shouldShowAllSlots, setShouldShowAllSlots] = createSignal(isSelectedParamNotInAvailableList());
+  const sortedSlots = createMemo(() =>
+    slots().sort((slotA, slotB) => slotA.displayName.localeCompare(slotB.displayName))
+  );
+  const currentParam = createMemo(() => availableParams().find((param) => param.name === props.condition.parameter));
 
   const updateCondition = (key: string, value: string) => {
     const newConditions = props.node.data.conditions.map((c, i) => {
@@ -53,7 +64,7 @@ const ConditionRow: Component<ConditionRowProps> = (props) => {
   const handleParameterChange = (newParameterName: string) => {
     if (props.condition.parameter === newParameterName) return;
 
-    const newParameter = availableParams().find(({ name }) => name === newParameterName) || { id: '' };
+    const newParameter = availableParams().find(({ name }) => name === newParameterName) || { name: '' };
 
     updateCondition('parameter', newParameter.name);
   };
@@ -83,7 +94,7 @@ const ConditionRow: Component<ConditionRowProps> = (props) => {
   const addParameter = () => {
     let newConditions = [];
     const newCondition = {
-      parameter: {},
+      parameter: '',
       operator: '',
       value: '',
     };
@@ -102,6 +113,19 @@ const ConditionRow: Component<ConditionRowProps> = (props) => {
     upsertNode(newNode);
   };
 
+  const toggleShowAllSlots = () => {
+    if (shouldShowAllSlots() && isSelectedParamNotInAvailableList()) return;
+
+    setShouldShowAllSlots((s) => !s);
+  };
+
+  const availableOperators = createMemo(() => {
+    if (props.condition.value !== '' && !Number.isNaN(Number(props.condition.value)))
+      return [...operators, ...numberOperators];
+
+    return operators;
+  });
+
   return (
     <tr
       classList={{
@@ -110,22 +134,33 @@ const ConditionRow: Component<ConditionRowProps> = (props) => {
       }}
     >
       <td>
-        <Tooltip title="Parameter">
+        <Tooltip title={t('parameter')}>
           <Autocomplete
-            options={availableParams()}
+            options={shouldShowAllSlots() ? sortedSlots() : availableParams()}
             getOptionKey={(option) => option.name as string}
             getOptionLabel={(option) => option.displayName as string}
             value={props.condition.parameter as string}
             onChange={handleParameterChange}
-            placeholder="Parameter"
+            placeholder={t('parameter')}
             fixedWidth="144px"
-          />
+          >
+            <div
+              classList={{
+                'condition-node-body__table__row__show-all-option': true,
+                'condition-node-body__table__row__show-all-option--disabled':
+                  isSelectedParamNotInAvailableList() && shouldShowAllSlots(),
+              }}
+              onClick={toggleShowAllSlots}
+            >
+              {shouldShowAllSlots() ? t('showAvailableOnly') : t('showAll')}
+            </div>
+          </Autocomplete>
         </Tooltip>
       </td>
       <td>
-        <Tooltip title="Operator">
+        <Tooltip title={t('operator')}>
           <Autocomplete
-            options={operators}
+            options={availableOperators()}
             getOptionKey={(option) => option}
             getOptionLabel={(option) => option}
             value={props.condition.operator as string}
@@ -136,7 +171,7 @@ const ConditionRow: Component<ConditionRowProps> = (props) => {
         </Tooltip>
       </td>
       <td>
-        <Tooltip title="Value">
+        <Tooltip title={t('value')}>
           <Show
             when={currentParam() && currentParam().customData && Array.isArray(currentParam().customData.values)}
             fallback={
@@ -153,6 +188,7 @@ const ConditionRow: Component<ConditionRowProps> = (props) => {
               getOptionLabel={(option) => option}
               value={props.condition.value as string}
               onChange={handleParameterValueChange}
+              shouldAllowFreeInput
               fixedWidth="96px"
             />
           </Show>

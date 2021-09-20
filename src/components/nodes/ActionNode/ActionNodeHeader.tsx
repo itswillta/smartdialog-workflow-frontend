@@ -35,8 +35,8 @@ const ActionNodeHeader: Component<ActionNodeHeaderProps> = (props) => {
       <IconButton class='action-node-header__more-options-button' ref={anchorEl} onClick={handleClick}>
         <MoreHorizIcon class='action-node-header__more-options-button__icon' />
       </IconButton>
-      <Menu anchorEl={anchorEl} isOpen={isOpen()} onClickAway={() => setIsOpen(false)}>
-        <MenuItem onClick={deleteNode}>Delete</MenuItem>
+      <Menu anchorEl={anchorEl} isOpen={isOpen()} onClose={() => setIsOpen(false)}>
+        <MenuItem onClick={deleteNode}>{t('delete')}</MenuItem>
       </Menu>
     </header>
   );
